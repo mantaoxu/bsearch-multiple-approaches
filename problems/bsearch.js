@@ -96,11 +96,11 @@ Write a Recursive Binary Search that returns the Index value of targetNum if it
 is in the nums array, and -1 if it is not found.
 *******************************************************************/
 
-const recurBSearchIdx = (nums, targetNum) => {
+const recurBSearchIdx = (nums, targetNums) => {
   // this implementation is identical to version 1, except rather than
   // returning true/false, return the index where you found the item
   // (instead of true) or -1 (instead of false).
-  if(!nums.length) return -1;
+  if (!nums.length) return -1;
 
   const midIdx = Math.floor(nums.length / 2);
   const midEl = nums[midIdx];
@@ -108,19 +108,19 @@ const recurBSearchIdx = (nums, targetNum) => {
   const leftHalf = nums.slice(0, midIdx);
   const rightHalf = nums.slice(midIdx + 1);
 
-  if (targetNum < midEl) {
-    return recurBSearch(leftHalf, targetNum);
-  } else if (targetNum > midEl) {
-    const idxShift = recurBSearch(rightHalf, targetNum);
-    if (idxShift === -1){
-      return -1;
-    } else {
-      return idxShift + midIdx + 1;
+  if (targetNums < midEl) {
+    return recurBSearchIdx(leftHalf, targetNums);
+  } else if (targetNums > midEl) {
+    const idxShift = recurBSearchIdx(rightHalf, targetNums)
+    if (idxShift === -1) {
+      return -1
+    }
+    else {
+      return idxShift + midIdx + 1
     }
   } else {
     return midIdx;
   }
-
 
   // HINT: the index value you return should be the index in the ORIGINAL array
   // and not the index of the sliced array. You'll notice this problem arise 
@@ -137,34 +137,40 @@ Write a Recursive Binary Search that returns the Index value of targetNum if it
 is in the nums array, and -1 if it is not found.
 *******************************************************************/
 
-const recurBSearchIdxV2 = (nums, targetNum, low = null, hi = null) => {
+const recurBSearchIdxV2 = (nums, targetNum, low = 0, hi = nums.length - 1) => {
   /*
   This implementation is recursive, but borrows the low/hi logic from Version 2
   to establish a different base case. Rather than shrinking the array until its
   length is 0, this implementation moves low and hi indices to determine
   what part of the original array is being searched. if they meet each other
   we know we have searched the entire array.(NOTE this function has FOUR params)
-
-  Base Case: 
-  if low is equal to high and we haven't found targetNum, then return -1 to
-  indicate that the value was not found.
-  
-  
-  Determine the slice point (the sum of low and hi, divided by 2)
-
-  If targetNum is less than nums[slicepoint], then
-  return the binary search of nums where low is the beginning of the array, and
-  hi is the middle of the array
-
-  If targetNum is less than nums[slicepoint], then
-  return the binary search of nums where low is the middle of the array, and hi
-  is the end of the array 
-
-  If it's not greater and not less (i.e. 'else'), return the slice point because
-  we have found our value!
   */
- if (lo === hi && !targetNum) return -1;
- const midIndex = Math.floor(nums.length / 2);
+
+ //  Base Case: 
+ //  if low is equal to high and we haven't found targetNum, then return -1 to
+ //  indicate that the value was not found.
+  if (low === hi && nums[low] !== targetNum) {
+    return -1;
+  }
+  let slicepoint = Math.floor((low + hi) / 2); // Determine the slice point (the sum of low and hi, divided by 2)
+
+ //  If targetNum is less than nums[slicepoint], then
+ //  return the binary search of nums where low is the beginning of the array, and
+ //  hi is the middle of the array
+  if (targetNum < nums[slicepoint]) {
+    return recurBSearchIdxV2(nums, targetNum, low, slicepoint);
+  }
+  // If targetNum is less than nums[slicepoint], then
+  // return the binary search of nums where low is the middle of the array, and hi
+  // is the end of the array 
+  else if (targetNum > nums[slicepoint]){
+    return recurBSearchIdxV2(nums, targetNum, slicepoint + 1, hi);
+    // If it's not greater and not less (i.e. 'else'), return the slice point because
+    // we have found our value!
+  }else {
+    return slicepoint;
+  }
+  
 }
 
 
@@ -178,7 +184,22 @@ it is in the nums array, and -1 if it is not found.
 const iterBSearchIdx = (nums, targetNum) => {
   // this is identical to Version 2, but return the index or -1 rather than
   // true or false
-  if(!nums.length) return -1;
+  let lowerIdx = 0;
+  let upperIdx = nums.length - 1;
+  let midIdx;
+
+  while (lowerIdx <= upperIdx) {
+    midIdx = Math.floor((lowerIdx + upperIdx) / 2);
+    if (nums[midIdx] < targetNum) {
+      lowerIdx = midIdx + 1;
+    } else if (nums[midIdx] > targetNum) {
+      upperIdx = midIdx - 1;
+    } else {
+      return midIdx;
+    }
+  }
+
+  return -1;
 
 }
 
